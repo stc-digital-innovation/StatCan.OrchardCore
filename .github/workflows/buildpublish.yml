@@ -1,0 +1,39 @@
+name: Build and Publish
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+
+  build:
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    name: Build Package
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Generate build number
+      uses: einaregilsson/build-number@v2 
+      with:
+        token: ${{secrets.github_token}}
+    - name: Build
+      env:
+        BuildNumber: ${{ env.BUILD_NUMBER }}
+      run: dotnet build --configuration Release
+    - name: Pack
+      env:
+        BuildNumber: ${{ env.BUILD_NUMBER }}
+      run: dotnet pack --configuration Release -o build-output --no-build
+    - name: Publish nuget
+      run: |
+           for f in ./build-output/*.nupkg
+           do
+             curl -vX PUT -u "${{ secrets.GITHUB_USERNAME }}:${{ secrets.GITHUB_TOKEN }}" -F package=@$f ${{ secrets.GPR_URL }}
+           done
+      shell: bash
