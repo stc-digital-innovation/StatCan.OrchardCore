@@ -1,5 +1,7 @@
 # StatCan Digital Innovation Team Orchard resources
 
+Archived. Please use: https://github.com/StatCan/StatCan.OrchardCore instead
+
 ![Build](https://github.com/stc-digital-innovation/StatCan.OrchardCore/workflows/Build%20and%20Publish/badge.svg?branch=master)
 
 This repository houses the Digital Innovation Team Orchard resources and modules
